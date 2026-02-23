@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
-const Button = ({text, onClick}) => <button onClick={onClick}>{text}</button>
+const Button = ({text, onClick, disabled}) => 
+  <button onClick={onClick} disabled={disabled}>{text}</button>
 
 const App = () => {
   const anecdotes = [
@@ -13,22 +14,33 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients.',
     'The only way to go fast, is to go well.'
   ]
-   
+     
   const [selected, setSelected] = useState(0)
+  const [votes, setVotes] = useState(Array(anecdotes.length).fill(0))
+  const [hasVoted, setHasVoted] = useState(false)
   
-    const handleRandomClick = () => {
-      //console.log('stara selected wynosi:', selected)
-      let random
-      do {
-        random = Math.floor(Math.random() * anecdotes.length)
-        //console.log('wylosowałem w pentli:', random)
-      } while (random === selected)
-      setSelected(random)
-    }
+  const handleRandomClick = () => {
+    let random
+    do {
+      random = Math.floor(Math.random() * anecdotes.length)
+    } while (random === selected)
+    setSelected(random)
+    setHasVoted(false)
+  }
+
+  const handleVoteClick = () => {
+    if (hasVoted) return
+    const newVotes = [...votes]
+    newVotes[selected]++
+    setVotes(newVotes)
+    setHasVoted(true)
+  }
 
   return (
     <div>
-      <p>{anecdotes[selected]}</p>
+      <div>{anecdotes[selected]}</div>
+      <div>has {votes[selected]} votes</div>
+      <Button text='vote' onClick={handleVoteClick} disabled={hasVoted}/>
       <Button text='next anecdote' onClick={handleRandomClick} />
     </div>
   )
