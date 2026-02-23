@@ -3,6 +3,24 @@ import { useState } from 'react'
 const Button = ({text, onClick, disabled}) => 
   <button onClick={onClick} disabled={disabled}>{text}</button>
 
+const Anecdote = ({anecdotes, index}) => <div>{anecdotes[index]}</div>
+
+const Votes = ({votes, index}) => <div>has {votes[index]} votes</div>
+
+const TopAnecdote = ({anecdotes, votes}) => {
+  const maxVoted = Math.max(...votes)
+  if (maxVoted === 0) return
+  const maxVotedIndex = votes.indexOf(maxVoted)
+  return (
+    <>
+      <h2>Anecdote with most votes</h2>
+      <Anecdote anecdotes={anecdotes} index={maxVotedIndex} />
+      <Votes votes={votes} index={maxVotedIndex} />
+      
+    </>
+  )
+}
+
 const App = () => {
   const anecdotes = [
     'If it hurts, do it more often.',
@@ -38,10 +56,12 @@ const App = () => {
 
   return (
     <div>
-      <div>{anecdotes[selected]}</div>
-      <div>has {votes[selected]} votes</div>
+      <h2>Anecdote of the day</h2>
+      <Anecdote anecdotes={anecdotes} index={selected} />
+      <Votes votes={votes} index={selected} />
       <Button text='vote' onClick={handleVoteClick} disabled={hasVoted}/>
       <Button text='next anecdote' onClick={handleRandomClick} />
+      <TopAnecdote anecdotes={anecdotes} votes={votes} />
     </div>
   )
 }
